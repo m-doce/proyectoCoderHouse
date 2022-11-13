@@ -4,6 +4,7 @@ public class PlayerMovement : MonoBehaviour
 {
 
     public float speed = 5f;
+    public float rotationSpeed = 5f;
     float movX;
     float movZ;
     public float jumpForce = 10;
@@ -52,6 +53,11 @@ public class PlayerMovement : MonoBehaviour
             rigidbody.velocity = new Vector3(rigidbody.velocity.x, rigidbody.velocity.y, 0);
         } //Frenar al jugador en el eje vertical cuando éste no se mueva
 
+
+        if(movement != Vector3.zero){
+            Quaternion toRotation = Quaternion.LookRotation(movement, Vector3.up);
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, toRotation, rotationSpeed * Time.deltaTime);
+        } //Manejo de la rotación del personaje en función hacia donde se mueve
 
     }
 
