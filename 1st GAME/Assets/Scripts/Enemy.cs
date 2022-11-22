@@ -36,7 +36,7 @@ public class Enemy : AutoMovement
 
     void OnCollisionEnter(Collision col)
     {
-        if(col.transform.gameObject.name == "Player"){
+        if(col.transform.gameObject.CompareTag("Player")){
             Respawn();
         }
     } //Chequeo si colisiono contra el jugador para hacerlo respawnear

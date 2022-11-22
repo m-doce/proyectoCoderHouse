@@ -26,25 +26,44 @@ public class PlayerMovement : MonoBehaviour
     }
     void Update()
     {
+        Jump();                
+        MoveAnimation();
+        StopMoving();
+        Rotation();
+    }
 
-        if(Input.GetKeyDown(KeyCode.Space) && canJump){
-            rigidbody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
-            canJump = false;
-            animator.SetBool("isJumping", true);
-        } //Manejo de salto y su animación
+    private void FixedUpdate()
+    {
+        MovePlayer();
+    }
 
+    private void OnCollisionEnter(Collision collider) {
+        if(collider.gameObject.CompareTag("jumpSite")){
+            canJump = true;
+            animator.SetBool("isJumping", false);
+        } //Chequear si el jugador puede volver a saltar(luego de tocar el suelo)
 
-        if(transform.position.y <= -10){
+        if(collider.gameObject.CompareTag("Respawn")){
             Respawn();
-        } //Reaparición del jugador
-        
-        if(movX != 0 || movZ != 0){
-            animator.SetBool("isRunning", true);
-        } //Animación para el movimiento
-        else{
-            animator.SetBool("isRunning", false);
-        } //Animación para el movimiento
+        } //Chequear si el jugador choca contra una zona de respawn        
+    } //Acción según la colisión del jugador contra X objeto
 
+    void MovePlayer(){
+        movX = Input.GetAxisRaw("Horizontal");
+        movZ = Input.GetAxisRaw("Vertical");
+        movement = new Vector3(movX, 0, movZ);
+        rigidbody.AddForce((movement * speed), ForceMode.Force);
+        //rigidbody.velocity = new Vector3(movX, 0, movZ) * speed;
+    } //Movimiento del jugador en los ejes horizontal y vertical
+
+    void Rotation(){
+        if(movement != Vector3.zero){
+            Quaternion toRotation = Quaternion.LookRotation(movement, Vector3.up);
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, toRotation, rotationSpeed * Time.deltaTime);
+        }
+    } //Manejo de la rotación del personaje en función hacia donde se mueve
+
+    void StopMoving(){
         if(movX == 0){
             rigidbody.velocity = new Vector3(0, rigidbody.velocity.y, rigidbody.velocity.z);
         } //Frenar al jugador en el eje horizontal cuando éste no se mueva
@@ -52,36 +71,28 @@ public class PlayerMovement : MonoBehaviour
         if(movZ == 0){
             rigidbody.velocity = new Vector3(rigidbody.velocity.x, rigidbody.velocity.y, 0);
         } //Frenar al jugador en el eje vertical cuando éste no se mueva
-
-
-        if(movement != Vector3.zero){
-            Quaternion toRotation = Quaternion.LookRotation(movement, Vector3.up);
-            transform.rotation = Quaternion.RotateTowards(transform.rotation, toRotation, rotationSpeed * Time.deltaTime);
-        } //Manejo de la rotación del personaje en función hacia donde se mueve
-
     }
 
-    private void FixedUpdate() {
-
-        MovePlayer();
-
-    }
-
-    private void OnCollisionEnter(Collision collider) {
-        if(collider.gameObject.tag == "jumpSite"){
-            canJump = true;
-            animator.SetBool("isJumping", false);
+    void Jump(){
+        if(Input.GetKeyDown(KeyCode.Space) && canJump){
+            rigidbody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            //rigidbody.velocity = new Vector3(0, jumpForce, 0);
+            canJump = false;
+            animator.SetBool("isJumping", true);
         }
-    } //Chequear si el jugador puede volver a saltar(luego de tocar el suelo)
+    } //Manejo de salto y su animación
 
-    void MovePlayer(){
-        movX = Input.GetAxisRaw("Horizontal");
-        movZ = Input.GetAxisRaw("Vertical");
-        movement = new Vector3(movX, 0, movZ);
-        rigidbody.AddForce((movement * speed), ForceMode.Force);
-    } //Movimiento del jugador en los ejes horizontal y vertical
+    void MoveAnimation(){
+        if(movX != 0 || movZ != 0){
+            animator.SetBool("isRunning", true);
+        } //Animación para el movimiento
+        else{
+            animator.SetBool("isRunning", false);
+        } //Animación para el movimiento
+    }
 
     void Respawn(){
+        
         transform.position = startPosition;
     } //Función de reaparición del jugador
 
