@@ -5,6 +5,12 @@ public class Enemy : AutoMovement
 
     public GameObject player; //Guardo referencia del jugador para la función de respawn
     private Vector3 playerResetPosition; //Para guardar la posición de respawn del jugador
+    private AudioManager audioManager;
+
+    void Awake()
+    {
+        audioManager = FindObjectOfType<AudioManager>();
+    }
 
     void Start()
     {
@@ -42,6 +48,7 @@ public class Enemy : AutoMovement
     } //Chequeo si colisiono contra el jugador para hacerlo respawnear
 
     void Respawn(){
+        audioManager.AudioSelector(2, 0.15f);
         player.transform.position = playerResetPosition;
     } //Envío al jugador a su posición inicial
 

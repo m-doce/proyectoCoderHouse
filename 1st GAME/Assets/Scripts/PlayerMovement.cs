@@ -4,6 +4,7 @@ public class PlayerMovement : MonoBehaviour
 {
 
     public float speed = 5f;
+    public float maxSpeed = 5f;
     public float rotationSpeed = 5f;
     float movX;
     float movZ;
@@ -17,6 +18,13 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody rigidbody;
 
     public Animator animator;
+    private AudioManager audioManager;
+
+    void Awake()
+    {
+        audioManager = FindObjectOfType<AudioManager>();
+    }
+
 
     void Start()
     {
@@ -29,7 +37,7 @@ public class PlayerMovement : MonoBehaviour
         Jump();                
         MoveAnimation();
         StopMoving();
-        Rotation();
+        Rotation();    
     }
 
     private void FixedUpdate()
@@ -53,7 +61,10 @@ public class PlayerMovement : MonoBehaviour
         movZ = Input.GetAxisRaw("Vertical");
         movement = new Vector3(movX, 0, movZ);
         rigidbody.AddForce((movement * speed), ForceMode.Force);
-        //rigidbody.velocity = new Vector3(movX, 0, movZ) * speed;
+        //Debug.Log(rigidbody.velocity.magnitude);
+        if(rigidbody.velocity.magnitude > maxSpeed){
+            rigidbody.velocity = Vector3.ClampMagnitude(rigidbody.velocity, maxSpeed);
+        } //Limito la velocidad máxima que puede alcanzar el jugador
     } //Movimiento del jugador en los ejes horizontal y vertical
 
     void Rotation(){
@@ -91,8 +102,8 @@ public class PlayerMovement : MonoBehaviour
         } //Animación para el movimiento
     }
 
-    void Respawn(){
-        
+    void Respawn(){       
+        audioManager.AudioSelector(2, 0.15f);
         transform.position = startPosition;
     } //Función de reaparición del jugador
 

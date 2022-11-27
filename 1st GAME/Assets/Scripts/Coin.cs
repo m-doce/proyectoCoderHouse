@@ -5,19 +5,19 @@ public class Coin : MonoBehaviour
 
     public int scoreToAdd;
     public GameObject Score;
-    // Start is called before the first frame update
+    private AudioManager audioManager;
 
+    void Awake()
+    {
+        audioManager = FindObjectOfType<AudioManager>();
+    }
     void OnTriggerEnter(Collider col)
     {
-        if(col.name == "Player"){
+        if(col.CompareTag("Player")){
+            audioManager.AudioSelector(1, 0.15f);
             Score.GetComponent<Score>().score += scoreToAdd;
             Destroy(gameObject);
         }
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    
 }
