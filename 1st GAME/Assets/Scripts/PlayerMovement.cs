@@ -56,6 +56,13 @@ public class PlayerMovement : MonoBehaviour
         } //Chequear si el jugador choca contra una zona de respawn        
     } //Acción según la colisión del jugador contra X objeto
 
+    /*private void OnTriggerEnter(Collider collider){
+        if(collider.gameObject.CompareTag("Checkpoint")){
+            startPosition = gameObject.transform.position;
+        } //Actualizar zona de respawn
+    }
+    Debo actualizar también la zona de respawn desde mi script de enemigo*/
+
     void MovePlayer(){
         movX = Input.GetAxisRaw("Horizontal");
         movZ = Input.GetAxisRaw("Vertical");
