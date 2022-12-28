@@ -15,6 +15,8 @@ public class PlayerMovement : MonoBehaviour
     
     public bool canJump = true;
 
+    public bool canRun = false;
+
     private Rigidbody rigidbody;
 
     public Animator animator;
@@ -34,7 +36,8 @@ public class PlayerMovement : MonoBehaviour
     }
     void Update()
     {
-        Jump();                
+        Jump();
+        Run();    
         MoveAnimation();
         StopMoving();
         Rotation();    
@@ -68,6 +71,14 @@ public class PlayerMovement : MonoBehaviour
         movZ = Input.GetAxisRaw("Vertical");
         movement = new Vector3(movX, 0, movZ);
         rigidbody.AddForce((movement * speed), ForceMode.Force);
+        
+        if(canRun){
+            maxSpeed = 10f;
+        }
+        else{
+            maxSpeed = 5f;
+        }
+
         //Debug.Log(rigidbody.velocity.magnitude);
         if(rigidbody.velocity.magnitude > maxSpeed){
             rigidbody.velocity = Vector3.ClampMagnitude(rigidbody.velocity, maxSpeed);
@@ -99,6 +110,15 @@ public class PlayerMovement : MonoBehaviour
             animator.SetBool("isJumping", true);
         }
     } //Manejo de salto y su animación
+
+    void Run(){
+        if(Input.GetKey(KeyCode.LeftShift)){
+            canRun = true;
+        }
+        else{
+            canRun = false;
+        }
+    }
 
     void MoveAnimation(){
         if(movX != 0 || movZ != 0){
